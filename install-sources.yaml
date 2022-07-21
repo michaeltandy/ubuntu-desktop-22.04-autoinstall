@@ -1,0 +1,12 @@
+- description:
+    en: This version has been customized to have a small runtime footprint in environments
+      where humans are not expected to log in.
+  id: ubuntu-server-minimal
+  locale_support: none
+  name:
+    en: Ubuntu Desktop
+  path: ubuntu-desktop.squashfs
+  size: 568651776
+  type: fsimage
+  variant: server
+  default: true

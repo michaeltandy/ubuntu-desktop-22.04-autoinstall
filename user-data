@@ -1,0 +1,49 @@
+#cloud-config
+# Based on https://www.molnar-peter.hu/en/ubuntu-jammy-netinstall-pxe.html
+autoinstall:
+  identity:
+    hostname: jammy-desktop-crypt
+    password: $6$5lpwCLsKLEzMkSJc$keOAhA6aO/5RocGThmhVA7LSNuW911Rx5HHXFEa75oGK20cEdAAgn14H5f5nGeq6QgcSyLPrWcg1.JvjXbhrN/
+    realname: Ubuntu user
+    username: ubuntu
+  keyboard:
+    layout: gb
+    toggle: null
+    variant: ''
+  locale: en_GB.UTF-8
+  storage:
+    config:
+    - { ptable: gpt, size: largest, wipe: superblock, preserve: false, name: '', grub_device: false, type: disk, id: disk-vda }
+    - { device: disk-vda, size: 50M, wipe: superblock, flag: boot, number: 1, preserve: false, grub_device: true, type: partition, id: partition-efi }
+    - { fstype: fat32, volume: partition-efi, preserve: false, type: format, id: format-efi }
+    - { device: disk-vda, size: 10G, wipe: superblock, flag: '', number: 2, preserve: false, grub_device: false, type: partition, id: partition-boot }
+    - { fstype: ext4, volume: partition-boot, preserve: false, type: format, id: format-boot }
+    - { device: disk-vda, size: -1, wipe: superblock, flag: '', number: 3, preserve: false, grub_device: false, type: partition, id: partition-root }
+# DM crypt
+    - { volume: partition-root, key: 'ubuntu', preserve: false, type: dm_crypt, id: dm_crypt-0 }
+    - { name: ubuntu-vg, devices: [ dm_crypt-0 ], preserve: false, type: lvm_volgroup, id: lvm_volgroup-0 }
+    - { name: ubuntu-lv, volgroup: lvm_volgroup-0, size: -1, wipe: superblock, preserve: false, type: lvm_partition, id: lvm_partition-0 }
+    - { fstype: ext4, volume: lvm_partition-0, preserve: false, type: format, id: format-root }
+    - { path: /, device: format-root, type: mount, id: mount-2 }
+    - { path: /boot, device: format-boot, type: mount, id: mount-1 }
+    - { path: /boot/efi, device: format-efi, type: mount, id: mount-0 }
+    swap:
+      swap: 1G
+  #packages:
+  #- ubuntu-desktop
+  #packages:
+  #- ubuntu-desktop 
+  #- plymouth-theme-ubuntu-logo 
+  #- grub-gfxpayload-lists
+  #early-commands:
+  #- ps fax > /early-psfax.txt
+  #- mount > /early-mount.txt
+  late-commands:
+  - mkdir /target/cdrom
+  - mount --bind /cdrom /target/cdrom
+  - curtin in-target --target=/target -- sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT=""/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"/' /etc/default/grub
+  - curtin in-target --target=/target -- apt-cdrom add
+  - curtin in-target --target=/target -- apt-get reinstall linux-image-5.15.0-25-generic
+  - curtin in-target --target=/target -- bash -c 'apt-get purge -y $(cat /cdrom/packages-to-purge.txt)'
+  - echo "Europe/London" > /target/etc/timezone
+  version: 1
