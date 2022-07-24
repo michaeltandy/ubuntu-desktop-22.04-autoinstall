@@ -75,6 +75,8 @@ cp ubuntu-22.04-live-server-amd64.iso guesswork.iso && \
         -map desktop-iso/casper/filesystem.size /casper/ubuntu-desktop.size \
         -map desktop-iso/casper/filesystem.squashfs /casper/ubuntu-desktop.squashfs \
         -map desktop-iso/casper/filesystem.squashfs.gpg /casper/ubuntu-desktop.squashfs.gpg \
+        -map desktop-iso/casper/filesystem.squashfs.gpg /casper/ubuntu-desktop.squashfs.gpg \
+        -map new-packages-installation/ new-packages-installation/ \
         -map install-sources.yaml /casper/install-sources.yaml \
         -map packages-to-purge.txt packages-to-purge.txt && \
     vboxmanage storageattach autoinstall-test --storagectl IDE --port 0 --device 0 --type dvddrive --medium guesswork.iso 
@@ -88,3 +90,7 @@ subiquity/TimeZone
 
 apt-get --print-uris --yes install ubuntu-desktop plymouth-theme-ubuntu-logo grub-gfxpayload-lists
 
+--option=Dir::Etc::sourcelist=/tmp/tmpewm1smkf/sources.list', '--option=Dir::Etc::sourceparts=/tmp/tmpewm1smkf/sources.list.d'
+
+
+late-commands are logged to /var/log/syslog 

@@ -41,9 +41,14 @@ autoinstall:
   late-commands:
   - mkdir /target/cdrom
   - mount --bind /cdrom /target/cdrom
+  - ls -l /target/home > /target/late-home.txt
+  - cp /target/etc/passwd /target/late-passwd.txt
   - curtin in-target --target=/target -- sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT=""/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"/' /etc/default/grub
-  - curtin in-target --target=/target -- apt-cdrom add
-  - curtin in-target --target=/target -- apt-get reinstall linux-image-5.15.0-25-generic
   - curtin in-target --target=/target -- bash -c 'apt-get purge -y $(cat /cdrom/packages-to-purge.txt)'
+  - curtin in-target --target=/target -- dpkg -i /cdrom/new-packages-installation/*.deb > /deb-install-results.txt
+  #- curtin in-target --target=/target -- apt-cdrom add
+  #- curtin in-target --target=/target -- apt-get reinstall linux-image-5.15.0-25-generic
   - echo "Europe/London" > /target/etc/timezone
+  - umount /target/cdrom
+  - rm -r /target/cdrom
   version: 1
