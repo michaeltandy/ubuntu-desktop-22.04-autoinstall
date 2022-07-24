@@ -7,11 +7,11 @@ set -euxo pipefail
 [[ ! -x "$(command -v apt-rdepends)" ]] && die "Please install the 'apt-rdepends' package."
 
 if [ ! -f ubuntu-22.04-live-server-amd64.iso ]; then
-    wget https://releases.ubuntu.com/22.04/ubuntu-22.04-live-server-amd64.iso
+    wget --progress=dot:giga https://releases.ubuntu.com/22.04/ubuntu-22.04-live-server-amd64.iso
 fi
 
 if [ ! -f ubuntu-22.04-desktop-amd64.iso ]; then
-    wget https://releases.ubuntu.com/22.04/ubuntu-22.04-desktop-amd64.iso
+    wget --progress=dot:giga https://releases.ubuntu.com/22.04/ubuntu-22.04-desktop-amd64.iso
 fi
 
 if [ ! -f desktop-casper/filesystem.squashfs ]; then
