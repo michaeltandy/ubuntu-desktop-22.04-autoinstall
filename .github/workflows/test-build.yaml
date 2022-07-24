@@ -5,5 +5,5 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
-      - run: apt-get update && apt-get install -y xorriso wget apt-rdepends
+      - run: sudo apt-get update && apt-get install -y xorriso wget apt-rdepends
       - run: ./make-autoinstall-image.sh
