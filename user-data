@@ -3,6 +3,7 @@
 autoinstall:
   identity:
     hostname: jammy-desktop-crypt
+    # The following credentials have no effect - the user will be set up by gnome-initial-setup
     password: $6$5lpwCLsKLEzMkSJc$keOAhA6aO/5RocGThmhVA7LSNuW911Rx5HHXFEa75oGK20cEdAAgn14H5f5nGeq6QgcSyLPrWcg1.JvjXbhrN/
     realname: Ubuntu user
     username: ubuntu
@@ -19,7 +20,7 @@ autoinstall:
     - { device: disk-vda, size: 10G, wipe: superblock, flag: '', number: 2, preserve: false, grub_device: false, type: partition, id: partition-boot }
     - { fstype: ext4, volume: partition-boot, preserve: false, type: format, id: format-boot }
     - { device: disk-vda, size: -1, wipe: superblock, flag: '', number: 3, preserve: false, grub_device: false, type: partition, id: partition-root }
-# DM crypt
+    # DM crypt - unlike the credentials above, this key does get used:
     - { volume: partition-root, key: 'ubuntu', preserve: false, type: dm_crypt, id: dm_crypt-0 }
     - { name: ubuntu-vg, devices: [ dm_crypt-0 ], preserve: false, type: lvm_volgroup, id: lvm_volgroup-0 }
     - { name: ubuntu-lv, volgroup: lvm_volgroup-0, size: -1, wipe: superblock, preserve: false, type: lvm_partition, id: lvm_partition-0 }
@@ -29,25 +30,12 @@ autoinstall:
     - { path: /boot/efi, device: format-efi, type: mount, id: mount-0 }
     swap:
       swap: 1G
-  #packages:
-  #- ubuntu-desktop
-  #packages:
-  #- ubuntu-desktop 
-  #- plymouth-theme-ubuntu-logo 
-  #- grub-gfxpayload-lists
-  #early-commands:
-  #- ps fax > /early-psfax.txt
-  #- mount > /early-mount.txt
   late-commands:
   - mkdir /target/cdrom
   - mount --bind /cdrom /target/cdrom
-  - ls -l /target/home > /target/late-home.txt
-  - cp /target/etc/passwd /target/late-passwd.txt
   - curtin in-target --target=/target -- sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT=""/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"/' /etc/default/grub
   - curtin in-target --target=/target -- bash -c 'apt-get purge -y $(cat /cdrom/packages-to-purge.txt)'
-  - curtin in-target --target=/target -- dpkg -i /cdrom/new-packages-installation/*.deb > /deb-install-results.txt
-  #- curtin in-target --target=/target -- apt-cdrom add
-  #- curtin in-target --target=/target -- apt-get reinstall linux-image-5.15.0-25-generic
+  - curtin in-target --target=/target -- dpkg -i /cdrom/packages-to-install/*.deb
   - echo "Europe/London" > /target/etc/timezone
   - umount /target/cdrom
   - rm -r /target/cdrom

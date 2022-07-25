@@ -12,3 +12,5 @@ I also drew inspiration from [covertsh's ubuntu autoinstall generator](https://g
 * But we extract the `squashfs` from the desktop ISO, because that's got the desktop packages in it.
 * Then we convert from a 'full' desktop install to a 'minimal' desktop install, which basically means removing packages.
 * For some reason this process doesn't put a working kernel on /boot, so we install one, along with anything else in `packages-to-install/`
+
+You might have to tweak things if you want it to line up closely with what you'd get from installing with the Desktop ISO - I'm targeting business laptops, so I've only tested with EFI/secure boot.

@@ -7,11 +7,11 @@ set -euxo pipefail
 [[ ! -x "$(command -v apt-rdepends)" ]] && die "Please install the 'apt-rdepends' package."
 
 if [ ! -f ubuntu-22.04-live-server-amd64.iso ]; then
-    wget --progress=dot:giga https://releases.ubuntu.com/22.04/ubuntu-22.04-live-server-amd64.iso
+    wget --progress=dot -e dotbytes=10M https://releases.ubuntu.com/22.04/ubuntu-22.04-live-server-amd64.iso
 fi
 
 if [ ! -f ubuntu-22.04-desktop-amd64.iso ]; then
-    wget --progress=dot:giga https://releases.ubuntu.com/22.04/ubuntu-22.04-desktop-amd64.iso
+    wget --progress=dot -e dotbytes=10M https://releases.ubuntu.com/22.04/ubuntu-22.04-desktop-amd64.iso
 fi
 
 if [ ! -f desktop-casper/filesystem.squashfs ]; then
@@ -34,7 +34,7 @@ egrep 'casper/(filesystem.manifest|filesystem.size|filesystem.squashfs|filesyste
 
 cp ubuntu-22.04-live-server-amd64.iso ubuntu-22.04-frankeninstaller.iso
 
-xorriso -boot_image any keep \
+xorriso -joliet on -boot_image any keep \
         -dev ubuntu-22.04-frankeninstaller.iso \
         -map meta-data /nocloud/meta-data \
         -map user-data /nocloud/user-data \
