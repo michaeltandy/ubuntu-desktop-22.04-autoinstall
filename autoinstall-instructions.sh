@@ -1,5 +1,6 @@
 
-wget https://mirrors.vinters.com/ubuntu-releases/22.04/ubuntu-22.04-live-server-amd64.iso
+wget https://releases.ubuntu.com/22.04/ubuntu-22.04-live-server-amd64.iso
+wget https://releases.ubuntu.com/22.04/ubuntu-22.04-desktop-amd64.iso
 
 # Create ISO distribution dirrectory:
 mkdir -p iso/nocloud/
@@ -76,12 +77,14 @@ cp ubuntu-22.04-live-server-amd64.iso guesswork.iso && \
         -map desktop-iso/casper/filesystem.squashfs /casper/ubuntu-desktop.squashfs \
         -map desktop-iso/casper/filesystem.squashfs.gpg /casper/ubuntu-desktop.squashfs.gpg \
         -map desktop-iso/casper/filesystem.squashfs.gpg /casper/ubuntu-desktop.squashfs.gpg \
-        -map new-packages-installation/ new-packages-installation/ \
+        -map packages-to-install/ packages-to-install/ \
         -map install-sources.yaml /casper/install-sources.yaml \
         -map packages-to-purge.txt packages-to-purge.txt && \
     vboxmanage storageattach autoinstall-test --storagectl IDE --port 0 --device 0 --type dvddrive --medium guesswork.iso 
     
-    
+
+/cdrom/pool/main/l/lin*/*.deb
+
 # Made shim-signed, efibootmgr etc become uninstallable because they're not in desktop-dists???
 
 subiquity/TimeZone
