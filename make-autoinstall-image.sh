@@ -26,7 +26,7 @@ if [ ! -f server-iso-extracted/.disk/info ]; then
     mkdir server-iso-extracted
     xorriso -osirrox on -indev "ubuntu-22.04-live-server-amd64.iso" -extract / server-iso-extracted
     chmod -R +w server-iso-extracted
-    cp server-iso-extracted/md5sum.txt md5sum.txt
+    cp server-iso-extracted/md5sum.txt server-md5sum.txt
 fi
 
 
