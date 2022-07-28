@@ -29,7 +29,15 @@ if [ ! -f server-iso-extracted/.disk/info ]; then
     cp server-iso-extracted/md5sum.txt server-md5sum.txt
 fi
 
+# These packages get run in the installer live-cd, so we can wifi to download updates.
+if [ ! -f packages-for-in-livecd/wireless-tools_*_amd64.deb ]; then
+    mkdir packages-for-in-livecd
+    cd packages-for-in-livecd
+    apt-get download libiw30 wireless-tools
+    cd ..
+fi
 
+# These packages get installed onto the target system
 if [ ! -f packages-to-install/linux-generic_*_amd64.deb ]; then
     mkdir packages-to-install
     cd packages-to-install
@@ -53,6 +61,7 @@ cp desktop-casper/filesystem.manifest server-iso-extracted/casper/ubuntu-desktop
 cp desktop-casper/filesystem.size server-iso-extracted/casper/ubuntu-desktop.size
 cp desktop-casper/filesystem.squashfs server-iso-extracted/casper/ubuntu-desktop.squashfs
 cp desktop-casper/filesystem.squashfs.gpg server-iso-extracted/casper/ubuntu-desktop.squashfs.gpg
+cp -r packages-for-in-livecd/ server-iso-extracted/packages-for-in-livecd/
 cp -r packages-to-install/ server-iso-extracted/packages-to-install/
 cp install-sources.yaml server-iso-extracted/casper/install-sources.yaml
 cp packages-to-purge.txt server-iso-extracted/packages-to-purge.txt

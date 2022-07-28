@@ -7,6 +7,8 @@ autoinstall:
     password: $6$5lpwCLsKLEzMkSJc$keOAhA6aO/5RocGThmhVA7LSNuW911Rx5HHXFEa75oGK20cEdAAgn14H5f5nGeq6QgcSyLPrWcg1.JvjXbhrN/
     realname: Ubuntu user
     username: ubuntu
+  refresh-installer:
+    update: no
   keyboard:
     layout: gb
     toggle: null
@@ -30,6 +32,14 @@ autoinstall:
     - { path: /boot/efi, device: format-efi, type: mount, id: mount-0 }
     swap:
       swap: 1G
+    grub:
+      # This avoids a loop where we autoinstall, reboot to the autoinstaller USB, then autoinstall again and so on.
+      reorder_uefi: False
+  early-commands:
+  - apt install -y mokutil efibootmgr
+  - dpkg -i /cdrom/packages-for-in-livecd/*.deb
+  - mount > /tmp/early-mount.txt
+  - mokutil --sb-state > /tmp/early-mokutil.txt 2>&1 || true
   late-commands:
   - mkdir /target/cdrom
   - mount --bind /cdrom /target/cdrom
@@ -39,4 +49,11 @@ autoinstall:
   - echo "Europe/London" > /target/etc/timezone
   - umount /target/cdrom
   - rm -r /target/cdrom
+  - mv /tmp/early-mount.txt /target/
+  - mv /tmp/early-mokutil.txt /target/
+  - bootctl status > /target/late-bootctl-status.txt
+  - efibootmgr -v > /target/late-efibootmgr.txt
+  - ls /sys/class/net/* > /target/late-net1.txt
+  - echo "Echo to console!" > /dev/console
+  - read x < /dev/console
   version: 1
