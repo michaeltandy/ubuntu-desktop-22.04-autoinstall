@@ -1,5 +1,7 @@
 # Ubuntu 22.04 Desktop Autoinstall
 
+# THIS MAKES AN ISO THAT WILL OVERWRITE THE DISK OF ANY COMPUTER THAT BOOTS IT WITHOUT ASKING FOR CONFIRMATION so don't boot it in any computer you don't want wiped.
+
 This script makes an auto-installer for Ubuntu 22.04 Desktop.
 
 This is very similar to [Molnár Péter's network-based autoinstall](https://www.molnar-peter.hu/en/ubuntu-jammy-netinstall-pxe.html) but (a) that needs a network connection, and (b) that installs the server version, then installs more packages to convert it into a desktop version - resulting in an install that's different to an install from the desktop ISO (e.g. network interfaces that aren't managed by NetworkManager)
