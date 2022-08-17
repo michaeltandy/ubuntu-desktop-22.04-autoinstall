@@ -30,10 +30,10 @@ if [ ! -f server-iso-extracted/.disk/info ]; then
 fi
 
 # These packages get run in the installer live-cd, so we can wifi to download updates.
-if [ ! -f packages-for-in-livecd/wireless-tools_*_amd64.deb ]; then
+if [ ! -f packages-for-in-livecd/network-manager_*_amd64.deb ]; then
     mkdir packages-for-in-livecd
     cd packages-for-in-livecd
-    apt-get download libiw30 wireless-tools
+    apt-get download wpasupplicant=2:2.10-6 ppp=2.4.9-1+1ubuntu3 libnl-route-3-200=3.5.0-0.1 pptp-linux=1.10.0-1build3 dnsmasq-base=2.86-1.1 libndp0=1.8-0ubuntu3 libpcsclite1=1.9.5-3 libteamdctl0=1.31-1build2 network-manager=1.36.4-2ubuntu1 network-manager-pptp=1.2.10-1 libbluetooth3=5.64-0ubuntu1 libnm0=1.36.4-2ubuntu1 dns-root-data=2021011101
     cd ..
 fi
 
@@ -95,7 +95,7 @@ xorriso -joliet on -as mkisofs \
     server-iso-extracted/
 
 
-
+# Uncomment/modify these lines to launch a virtualbox VM, if you need to.
 #vboxmanage storageattach autoinstall-test --storagectl IDE --port 0 --device 0 --type dvddrive --medium ubuntu-22.04-frankeninstaller.iso
-    
+#vboxmanage startvm autoinstall-test
 
