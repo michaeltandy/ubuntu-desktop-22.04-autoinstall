@@ -4,6 +4,9 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     environment: env-with-sample-variables
+    env:
+      WIFI_SSID: ${{ secrets.WIFI_SSID }}
+      WIFI_PASSWORD: ${{ secrets.WIFI_PASSWORD }}
     steps:
       - uses: actions/checkout@v3
       - run: sudo apt-get update && sudo apt-get install -y xorriso wget apt-rdepends
