@@ -79,17 +79,17 @@ cd server-iso-extracted/extra-packages/
 dpkg-scanpackages . > Packages
 cd -
 
-# Parameters found with 'xorriso -indev ubuntu-22.04-live-server-amd64.iso -report_el_torito as_mkisofs'
+# Parameters found with 'xorriso -indev ubuntu-22.04.1-live-server-amd64.iso -report_el_torito as_mkisofs'
 
 xorriso -joliet on -as mkisofs \
     -V 'Ubuntu 22.04 autoinstall' \
     --modification-date="$(date -u +'%Y%m%d%H%M%S00')" \
-    --grub2-mbr --interval:local_fs:0s-15s:zero_mbrpt,zero_gpt:'ubuntu-22.04-live-server-amd64.iso' \
+    --grub2-mbr --interval:local_fs:0s-15s:zero_mbrpt,zero_gpt:'ubuntu-22.04.1-live-server-amd64.iso' \
     --protective-msdos-label \
     -partition_cyl_align off \
     -partition_offset 16 \
     --mbr-force-bootable \
-    -append_partition 2 28732ac11ff8d211ba4b00a0c93ec93b --interval:local_fs:2855516d-2864011d::'ubuntu-22.04-live-server-amd64.iso' \
+    -append_partition 2 28732ac11ff8d211ba4b00a0c93ec93b --interval:local_fs:2871452d-2879947d::'ubuntu-22.04.1-live-server-amd64.iso' \
     -appended_part_as_gpt \
     -iso_mbr_part_type a2a0d0ebe5b9334487c068b6b72699c7 \
     -c '/boot.catalog' \
@@ -99,16 +99,16 @@ xorriso -joliet on -as mkisofs \
     -boot-info-table \
     --grub2-boot-info \
     -eltorito-alt-boot \
-    -e '--interval:appended_partition_2_start_713879s_size_8496d:all::' \
+    -e '--interval:appended_partition_2_start_717863s_size_8496d:all::' \
     -no-emul-boot \
     -boot-load-size 8496 \
     -isohybrid-gpt-basdat \
-    -V "Ubuntu 22.04 autoinstall" \
-    -o ubuntu-22.04-frankeninstaller.iso \
+    -V "Ubuntu 22.04.1 autoinstall" \
+    -o ubuntu-22.04.1-frankeninstaller.iso \
     server-iso-extracted/
 
 
 # Uncomment/modify these lines to launch a virtualbox VM, if you need to.
-#vboxmanage storageattach autoinstall-test --storagectl IDE --port 0 --device 0 --type dvddrive --medium ubuntu-22.04-frankeninstaller.iso
+#vboxmanage storageattach autoinstall-test --storagectl IDE --port 0 --device 0 --type dvddrive --medium ubuntu-22.04.1-frankeninstaller.iso
 #vboxmanage startvm autoinstall-test
 
