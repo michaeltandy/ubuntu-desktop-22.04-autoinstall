@@ -35,25 +35,25 @@ autoinstall:
     grub:
       # This avoids a loop where we autoinstall, reboot to the autoinstaller USB, then autoinstall again and so on.
       reorder_uefi: False
+  # From https://askubuntu.com/a/1410679 - for repeatability whether install is online or offline.
+  updates: security
+  apt:
+    disable_suites: [security]
   early-commands:
-  - apt install -y mokutil efibootmgr
-  - dpkg -i /cdrom/packages-for-in-livecd/*.deb
-  - mount > /tmp/early-mount.txt
-  - mokutil --sb-state > /tmp/early-mokutil.txt 2>&1 || true
+  - apt update -y -oDir::Etc::sourcelist=/cdrom/dpkg-override.list
+  - apt install -y -oDir::Etc::sourcelist=/cdrom/dpkg-override.list mokutil efibootmgr network-manager
+  - /cdrom/attempt-wifi-connection.sh
   late-commands:
+  - if [ -z "$(dig +short gb.archive.ubuntu.com)" ]; then echo OFFLINE; else echo ONLINE; fi
   - mkdir /target/cdrom
   - mount --bind /cdrom /target/cdrom
   - curtin in-target --target=/target -- sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT=""/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"/' /etc/default/grub
   - curtin in-target --target=/target -- bash -c 'apt-get purge -y $(cat /cdrom/packages-to-purge.txt)'
-  - curtin in-target --target=/target -- dpkg -i /cdrom/packages-to-install/*.deb
+  - curtin in-target --target=/target -- apt update -y -oDir::Etc::sourcelist=/cdrom/dpkg-override.list
+  - curtin in-target --target=/target -- apt upgrade -y -oDir::Etc::sourcelist=/cdrom/dpkg-override.list
   - echo "Europe/London" > /target/etc/timezone
   - umount /target/cdrom
   - rm -r /target/cdrom
-  - mv /tmp/early-mount.txt /target/
-  - mv /tmp/early-mokutil.txt /target/
-  - bootctl status > /target/late-bootctl-status.txt
-  - efibootmgr -v > /target/late-efibootmgr.txt
-  - ls /sys/class/net/* > /target/late-net1.txt
-  - echo "Echo to console!" > /dev/console
-  - read x < /dev/console
+  - mv /target/etc/apt/sources.list.curtin.old /target/etc/apt/sources.list
   version: 1
+

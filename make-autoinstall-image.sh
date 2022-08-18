@@ -47,6 +47,12 @@ fi
 
 date -u +"Ubuntu 22.04 autoinstall, build %Y-%m-%dT%H:%M:%SZ" > disk-info.txt
 
+echo "deb [trusted=yes] file:///cdrom/extra-packages ./" > server-iso-extracted/dpkg-override.list
+echo "deb [trusted=yes] file:///cdrom jammy main restricted" >> server-iso-extracted/dpkg-override.list
+
+echo "export WIFI_SSID=$WIFI_SSID" > server-iso-extracted/wifi-secrets
+echo "export WIFI_PASSWORD=$WIFI_PASSWORD" >> server-iso-extracted/wifi-secrets
+
 # reconstruct md5sum.txt
 egrep -v '(boot/grub/grub.cfg|casper/install-sources.yaml|.disk/info)' server-md5sum.txt > md5sum.txt
 egrep 'casper/(filesystem.manifest|filesystem.size|filesystem.squashfs|filesystem.squashfs.gpg)' desktop-md5sum.txt >> md5sum.txt
@@ -61,10 +67,18 @@ cp desktop-casper/filesystem.manifest server-iso-extracted/casper/ubuntu-desktop
 cp desktop-casper/filesystem.size server-iso-extracted/casper/ubuntu-desktop.size
 cp desktop-casper/filesystem.squashfs server-iso-extracted/casper/ubuntu-desktop.squashfs
 cp desktop-casper/filesystem.squashfs.gpg server-iso-extracted/casper/ubuntu-desktop.squashfs.gpg
-cp -r packages-for-in-livecd/ server-iso-extracted/packages-for-in-livecd/
-cp -r packages-to-install/ server-iso-extracted/packages-to-install/
+#cp -r packages-for-in-livecd/ server-iso-extracted/packages-for-in-livecd/
+#cp -r packages-to-install/ server-iso-extracted/packages-to-install/
 cp install-sources.yaml server-iso-extracted/casper/install-sources.yaml
 cp packages-to-purge.txt server-iso-extracted/packages-to-purge.txt
+cp attempt-wifi-connection.sh server-iso-extracted/
+
+mkdir -p server-iso-extracted/extra-packages
+cp packages-for-in-livecd/* server-iso-extracted/extra-packages/
+cp packages-to-install/* server-iso-extracted/extra-packages/
+cd server-iso-extracted/extra-packages/
+dpkg-scanpackages . > Packages
+cd -
 
 # Parameters found with 'xorriso -indev ubuntu-22.04-live-server-amd64.iso -report_el_torito as_mkisofs'
 
