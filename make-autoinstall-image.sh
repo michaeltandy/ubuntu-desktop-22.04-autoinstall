@@ -16,15 +16,14 @@ fi
 
 if [ ! -f desktop-casper/filesystem.squashfs ]; then
     mkdir desktop-casper
-    #xorriso -osirrox on -indev "ubuntu-22.04-live-server-amd64.iso" -extract md5sum.txt server-md5sum.txt
-    xorriso -osirrox on -indev "ubuntu-22.04-desktop-amd64.iso" -extract /casper/ desktop-casper/ -extract md5sum.txt desktop-md5sum.txt
+    xorriso -osirrox on -indev "ubuntu-22.04.1-desktop-amd64.iso" -extract /casper/ desktop-casper/ -extract md5sum.txt desktop-md5sum.txt
     chmod -R +w desktop-casper
     touch meta-data
 fi
 
 if [ ! -f server-iso-extracted/.disk/info ]; then
     mkdir server-iso-extracted
-    xorriso -osirrox on -indev "ubuntu-22.04-live-server-amd64.iso" -extract / server-iso-extracted
+    xorriso -osirrox on -indev "ubuntu-22.04.1-live-server-amd64.iso" -extract / server-iso-extracted
     chmod -R +w server-iso-extracted
     cp server-iso-extracted/md5sum.txt server-md5sum.txt
 fi
