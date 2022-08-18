@@ -6,12 +6,12 @@ set -euxo pipefail
 [[ ! -x "$(command -v wget)" ]] && die "Please install the 'wget' package."
 [[ ! -x "$(command -v apt-rdepends)" ]] && die "Please install the 'apt-rdepends' package."
 
-if [ ! -f ubuntu-22.04-live-server-amd64.iso ]; then
-    wget --progress=dot -e dotbytes=10M https://releases.ubuntu.com/22.04/ubuntu-22.04-live-server-amd64.iso
+if [ ! -f ubuntu-22.04.1-live-server-amd64.iso ]; then
+    wget --progress=dot -e dotbytes=10M https://releases.ubuntu.com/22.04/ubuntu-22.04.1-live-server-amd64.iso
 fi
 
-if [ ! -f ubuntu-22.04-desktop-amd64.iso ]; then
-    wget --progress=dot -e dotbytes=10M https://releases.ubuntu.com/22.04/ubuntu-22.04-desktop-amd64.iso
+if [ ! -f ubuntu-22.04.1-desktop-amd64.iso ]; then
+    wget --progress=dot -e dotbytes=10M https://releases.ubuntu.com/22.04/ubuntu-22.04.1-desktop-amd64.iso
 fi
 
 if [ ! -f desktop-casper/filesystem.squashfs ]; then
