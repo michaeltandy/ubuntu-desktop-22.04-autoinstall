@@ -28,19 +28,11 @@ if [ ! -f server-iso-extracted/.disk/info ]; then
     cp server-iso-extracted/md5sum.txt server-md5sum.txt
 fi
 
-# These packages get run in the installer live-cd, so we can wifi to download updates.
-if [ ! -f packages-for-in-livecd/network-manager_*_amd64.deb ]; then
-    mkdir packages-for-in-livecd
-    cd packages-for-in-livecd
-    apt-get download wpasupplicant=2:2.10-6 ppp=2.4.9-1+1ubuntu3 libnl-route-3-200=3.5.0-0.1 pptp-linux=1.10.0-1build3 dnsmasq-base=2.86-1.1 libndp0=1.8-0ubuntu3 libpcsclite1=1.9.5-3 libteamdctl0=1.31-1build2 network-manager=1.36.4-2ubuntu1 network-manager-pptp=1.2.10-1 libbluetooth3=5.64-0ubuntu1 libnm0=1.36.4-2ubuntu1 dns-root-data=2021011101
-    cd ..
-fi
-
-# These packages get installed onto the target system
-if [ ! -f packages-to-install/linux-generic_*_amd64.deb ]; then
-    mkdir packages-to-install
-    cd packages-to-install
+if [ ! -f extra-packages/*_amd64.deb ]; then
+    mkdir extra-packages
+    cd extra-packages
     apt-get download $(apt-rdepends linux-generic|egrep '^(linux-generic|linux-headers-generic|linux-headers|linux-image-|linux-modules-)')
+    apt-get download wpasupplicant=2:2.10-6 ppp=2.4.9-1+1ubuntu3 libnl-route-3-200=3.5.0-0.1 pptp-linux=1.10.0-1build3 dnsmasq-base=2.86-1.1 libndp0=1.8-0ubuntu3 libpcsclite1=1.9.5-3 libteamdctl0=1.31-1build2 network-manager=1.36.4-2ubuntu1 network-manager-pptp=1.2.10-1 libbluetooth3=5.64-0ubuntu1 libnm0=1.36.4-2ubuntu1 dns-root-data=2021011101 tpm2-tools libtss2-rc0 libtss2-tctildr0
     cd ..
 fi
 
@@ -49,8 +41,8 @@ date -u +"Ubuntu 22.04 autoinstall, build %Y-%m-%dT%H:%M:%SZ" > disk-info.txt
 echo "deb [trusted=yes] file:///cdrom/extra-packages ./" > server-iso-extracted/dpkg-override.list
 echo "deb [trusted=yes] file:///cdrom jammy main restricted" >> server-iso-extracted/dpkg-override.list
 
-echo "export WIFI_SSID=$WIFI_SSID" > server-iso-extracted/wifi-secrets
-echo "export WIFI_PASSWORD=$WIFI_PASSWORD" >> server-iso-extracted/wifi-secrets
+echo "export WIFI_SSID=\"$WIFI_SSID\"" > server-iso-extracted/wifi-secrets
+echo "export WIFI_PASSWORD=\"$WIFI_PASSWORD\"" >> server-iso-extracted/wifi-secrets
 
 # reconstruct md5sum.txt
 egrep -v '(boot/grub/grub.cfg|casper/install-sources.yaml|.disk/info)' server-md5sum.txt > md5sum.txt
@@ -66,15 +58,13 @@ cp desktop-casper/filesystem.manifest server-iso-extracted/casper/ubuntu-desktop
 cp desktop-casper/filesystem.size server-iso-extracted/casper/ubuntu-desktop.size
 cp desktop-casper/filesystem.squashfs server-iso-extracted/casper/ubuntu-desktop.squashfs
 cp desktop-casper/filesystem.squashfs.gpg server-iso-extracted/casper/ubuntu-desktop.squashfs.gpg
-#cp -r packages-for-in-livecd/ server-iso-extracted/packages-for-in-livecd/
-#cp -r packages-to-install/ server-iso-extracted/packages-to-install/
 cp install-sources.yaml server-iso-extracted/casper/install-sources.yaml
 cp packages-to-purge.txt server-iso-extracted/packages-to-purge.txt
 cp attempt-wifi-connection.sh server-iso-extracted/
+cp setup-secureboot-mok.sh server-iso-extracted/
 
 mkdir -p server-iso-extracted/extra-packages
-cp packages-for-in-livecd/* server-iso-extracted/extra-packages/
-cp packages-to-install/* server-iso-extracted/extra-packages/
+cp extra-packages/* server-iso-extracted/extra-packages/
 cd server-iso-extracted/extra-packages/
 dpkg-scanpackages . > Packages
 cd -

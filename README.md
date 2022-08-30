@@ -16,3 +16,11 @@ I also drew inspiration from [covertsh's ubuntu autoinstall generator](https://g
 * For some reason this process doesn't put a working kernel on /boot, so we install one, along with anything else in `packages-to-install/`
 
 You might have to tweak things if you want it to line up closely with what you'd get from installing with the Desktop ISO - I'm targeting business laptops, so I've only tested with EFI/secure boot.
+
+# Other useful info
+
+* [curtin yaml examples](https://github.com/canonical/curtin/blob/master/examples/apt-source.yaml)
+* [curtin documentation](https://curtin.readthedocs.io/en/latest/index.html)
+* [autoinstall reference](https://ubuntu.com/server/docs/install/autoinstall-reference)
+* [apt-get sources.list info](https://wiki.debian.org/SourcesList)
+* [subiquity source code](https://github.com/canonical/subiquity/blob/324ff0bc8fa5a5f3c843f59dedba7f955050e9a6/subiquity/server/controllers/install.py#L326)
