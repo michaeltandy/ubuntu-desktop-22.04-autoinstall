@@ -14,7 +14,7 @@ autoinstall:
   refresh-installer:
     update: no
   keyboard:
-    layout: gb
+    layout: gb 
     toggle: null
     variant: ''
   locale: en_GB.UTF-8
@@ -45,23 +45,28 @@ autoinstall:
   #  disable_suites: [security]
   early-commands:
   - apt update -y -oDir::Etc::sourcelist=/cdrom/dpkg-override.list
-  - apt install -y -oDir::Etc::sourcelist=/cdrom/dpkg-override.list mokutil efibootmgr network-manager tpm2-tools
+  - apt install -y -oDir::Etc::sourcelist=/cdrom/dpkg-override.list mokutil efibootmgr network-manager tpm2-tools sox
   - /cdrom/attempt-wifi-connection.sh
   - echo "NTP=ntp.ubuntu.com" >> /etc/systemd/timesyncd.conf && service systemd-timesyncd restart
+  - echo "Choose system hostname" > /dev/console
+  - play /cdrom/drip.ogg
+  - bash -c 'read </dev/console; echo "You entered $REPLY"'
   late-commands:
   - if [ -z "$(dig +short gb.archive.ubuntu.com)" ]; then echo OFFLINE; else echo ONLINE; fi
   - mkdir /target/cdrom
   - mount --bind /cdrom /target/cdrom
-  - curtin in-target --target=/target -- sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT=""/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"/' /etc/default/grub && update-grub
+  - curtin in-target --target=/target -- sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT=""/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"/' /etc/default/grub
+  - curtin in-target --target=/target -- update-grub
   - curtin in-target --target=/target -- bash -c 'apt-get purge -y $(cat /cdrom/packages-to-purge.txt)'
   - curtin in-target --target=/target -- apt update -y -oDir::Etc::sourcelist=/cdrom/dpkg-override.list
   - curtin in-target --target=/target -- apt upgrade -y -oDir::Etc::sourcelist=/cdrom/dpkg-override.list
   - curtin in-target --target=/target -- /cdrom/setup-secureboot-mok.sh
-  - echo "Europe/London" > /target/etc/timezone
+  - cp /etc/NetworkManager/system-connections/*.nmconnection /target/etc/NetworkManager/system-connections/
   - umount /target/cdrom
   - rm -r /target/cdrom
   - mv /target/etc/apt/sources.list.curtin.old /target/etc/apt/sources.list
   - tpm2_pcrread > /target/late-tpm2_pcrread.txt || true
   - tpm2_eventlog /sys/kernel/security/tpm0/binary_bios_measurements > /target/late-tpm2_eventlog.txt || true
+  
   version: 1
 
