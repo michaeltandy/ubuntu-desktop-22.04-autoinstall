@@ -52,7 +52,7 @@ cp desktop-casper/filesystem-modified.squashfs server-iso-extracted/casper/ubunt
 cp modified-ubuntu-server-minimal.ubuntu-server.installer.generic.squashfs server-iso-extracted/casper/ubuntu-server-minimal.ubuntu-server.installer.generic.squashfs
 cp attempt-wifi-connection.sh server-iso-extracted/
 cp setup-secureboot-mok.sh server-iso-extracted/
-cp /usr/share/sounds/gnome/default/alerts/drip.ogg server-iso-extracted/
+cp sample.ogg server-iso-extracted/
 
 # reconstruct md5sum.txt
 #egrep -v '(boot/grub/grub.cfg|casper/install-sources.yaml|.disk/info)' server-md5sum.txt > md5sum.txt
