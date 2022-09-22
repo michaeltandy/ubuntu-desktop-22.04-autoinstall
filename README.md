@@ -13,9 +13,16 @@ I also drew inspiration from [covertsh's ubuntu autoinstall generator](https://g
 * We use the server install ISO (because that's capable of autoinstall with an encrypted hard drive) 
 * But we extract the `squashfs` from the desktop ISO, because that's got the desktop packages in it.
 * Then we convert from a 'full' desktop install to a 'minimal' desktop install, which basically means removing packages.
-* For some reason this process doesn't put a working kernel on /boot, so we install one, along with anything else in `packages-to-install/`
 
 You might have to tweak things if you want it to line up closely with what you'd get from installing with the Desktop ISO - I'm targeting business laptops, so I've only tested with EFI/secure boot.
+
+## Two ways to get packages into your custom install
+
+I've experimented with two ways to customise the packages in the installation, while still allowing offline installation.
+
+* If you want to generate your install ISO without being root, check out the `without-root-or-modifying-squashfs` branch. Instead of modifying the `squashfs` filesystem images, that branch creates an extra store of packages on the ISO and installs them at install-time.
+
+* On the other hand, in this `main` branch we modify two `squashfs` filesystems, installing the packages once upfront. This makes for a faster install, but you have to run parts of the build process as root.
 
 # Other useful info
 
@@ -24,3 +31,4 @@ You might have to tweak things if you want it to line up closely with what you'd
 * [autoinstall reference](https://ubuntu.com/server/docs/install/autoinstall-reference)
 * [apt-get sources.list info](https://wiki.debian.org/SourcesList)
 * [subiquity source code](https://github.com/canonical/subiquity/blob/324ff0bc8fa5a5f3c843f59dedba7f955050e9a6/subiquity/server/controllers/install.py#L326)
+* [Ubuntu Live CD customization](https://help.ubuntu.com/community/LiveCDCustomization)
