@@ -7,6 +7,8 @@ if ! ischroot -t; then
   exit 1
 fi
 
+export DEBIAN_FRONTEND=noninteractive
+
 apt-get update
 apt install -y mokutil efibootmgr network-manager tpm2-tools sox
 

@@ -2,7 +2,7 @@
 # Based on https://www.molnar-peter.hu/en/ubuntu-jammy-netinstall-pxe.html
 autoinstall:
   identity:
-    hostname: jammy-desktop-crypt
+    hostname: PLACEHOLDER-HOSTNAME
     # The following credentials have no effect - the user will be set up by gnome-initial-setup
     password: $6$5lpwCLsKLEzMkSJc$keOAhA6aO/5RocGThmhVA7LSNuW911Rx5HHXFEa75oGK20cEdAAgn14H5f5nGeq6QgcSyLPrWcg1.JvjXbhrN/
     realname: Ubuntu user
@@ -39,6 +39,8 @@ autoinstall:
     grub:
       # This avoids a loop where we autoinstall, reboot to the autoinstaller USB, then autoinstall again and so on.
       reorder_uefi: False
+  drivers:
+    install: true
   # From https://askubuntu.com/a/1410679 - for repeatability whether install is online or offline.
   #updates: security
   #apt:
@@ -46,9 +48,9 @@ autoinstall:
   early-commands:
   - mount > /mount-early.txt
   - /cdrom/attempt-wifi-connection.sh
-  - echo "Choose system hostname" > /dev/console
-  - play /cdrom/drip.ogg
-  #- bash -c 'read </dev/console; echo "You entered $REPLY"'
+  #- echo "Choose system hostname" > /dev/console
+  #- play /cdrom/sample.ogg
+  #- bash -c 'read </dev/console; sed -i "s/PLACEHOLDER-HOSTNAME/$REPLY/" /var/lib/cloud/instances/nocloud/user-data.txt'
   late-commands:
   - if [ -z "$(dig +short gb.archive.ubuntu.com)" ]; then echo OFFLINE; else echo ONLINE; fi
   - mkdir /target/cdrom
@@ -64,5 +66,6 @@ autoinstall:
   - mv /mount-early.txt /target/
   - tpm2_pcrread > /target/late-tpm2_pcrread.txt || true
   - tpm2_eventlog /sys/kernel/security/tpm0/binary_bios_measurements > /target/late-tpm2_eventlog.txt || true
+  #- curtin in-target --target=/target -- ubuntu-drivers --gpgpu install nvidia
   version: 1
 

@@ -6,20 +6,22 @@ set -euxo pipefail
 [[ ! -x "$(command -v wget)" ]] && die "Please install the 'wget' package."
 [[ ! -x "$(command -v apt-rdepends)" ]] && die "Please install the 'apt-rdepends' package."
 
+UBUNTU_VER="22.04.3"
+
 # Retrieve the server ISO, if we don't have it already.
-if [ ! -f ubuntu-22.04.1-live-server-amd64.iso ]; then
-    wget --progress=dot -e dotbytes=10M https://releases.ubuntu.com/22.04/ubuntu-22.04.1-live-server-amd64.iso
+if [ ! -f ubuntu-$UBUNTU_VER-live-server-amd64.iso ]; then
+    wget --progress=dot -e dotbytes=10M https://releases.ubuntu.com/22.04/ubuntu-$UBUNTU_VER-live-server-amd64.iso
 fi
 
 # Also retrieve the desktop ISO, if we don't have it already.
-if [ ! -f ubuntu-22.04.1-desktop-amd64.iso ]; then
-    wget --progress=dot -e dotbytes=10M https://releases.ubuntu.com/22.04/ubuntu-22.04.1-desktop-amd64.iso
+if [ ! -f ubuntu-$UBUNTU_VER-desktop-amd64.iso ]; then
+    wget --progress=dot -e dotbytes=10M https://releases.ubuntu.com/22.04/ubuntu-$UBUNTU_VER-desktop-amd64.iso
 fi
 
 # Extract the desktop filesystem, if we haven't done so already:
 if [ ! -f desktop-casper/filesystem.squashfs ]; then
     mkdir desktop-casper
-    xorriso -osirrox on -indev "ubuntu-22.04.1-desktop-amd64.iso" -extract /casper/ desktop-casper/
+    xorriso -osirrox on -indev "ubuntu-$UBUNTU_VER-desktop-amd64.iso" -extract /casper/ desktop-casper/
     chmod -R +w desktop-casper
     touch meta-data
 fi
@@ -27,7 +29,7 @@ fi
 # And extract the entire server ISO, if we haven't done so already.
 if [ ! -f server-iso-extracted/.disk/info ]; then
     mkdir server-iso-extracted
-    xorriso -osirrox on -indev "ubuntu-22.04.1-live-server-amd64.iso" -extract / server-iso-extracted
+    xorriso -osirrox on -indev "ubuntu-$UBUNTU_VER-live-server-amd64.iso" -extract / server-iso-extracted
     chmod -R +w server-iso-extracted
     cp server-iso-extracted/casper/ubuntu-server-minimal.ubuntu-server.installer.generic.squashfs unmodified-ubuntu-server-minimal.ubuntu-server.installer.generic.squashfs
 fi
@@ -60,17 +62,17 @@ cd server-iso-extracted
 find ./dists ./.disk ./pool ./casper ./boot -type f -print0 | xargs -0 md5sum > md5sum.txt
 cd ..
 
-# Parameters found with 'xorriso -indev ubuntu-22.04.1-live-server-amd64.iso -report_el_torito as_mkisofs'
+# Parameters found with 'xorriso -indev ubuntu-$UBUNTU_VER-live-server-amd64.iso -report_el_torito as_mkisofs'
 
 xorriso -joliet on -as mkisofs \
-    -V 'Ubuntu 22.04 autoinstall' \
+    -V "Ubuntu $UBUNTU_VER autoinstall" \
     --modification-date="$(date -u +'%Y%m%d%H%M%S00')" \
-    --grub2-mbr --interval:local_fs:0s-15s:zero_mbrpt,zero_gpt:'ubuntu-22.04.1-live-server-amd64.iso' \
+    --grub2-mbr --interval:local_fs:0s-15s:zero_mbrpt,zero_gpt:"ubuntu-$UBUNTU_VER-live-server-amd64.iso" \
     --protective-msdos-label \
     -partition_cyl_align off \
     -partition_offset 16 \
     --mbr-force-bootable \
-    -append_partition 2 28732ac11ff8d211ba4b00a0c93ec93b --interval:local_fs:2871452d-2879947d::'ubuntu-22.04.1-live-server-amd64.iso' \
+    -append_partition 2 28732ac11ff8d211ba4b00a0c93ec93b --interval:local_fs:4156048d-4166115d::"ubuntu-$UBUNTU_VER-live-server-amd64.iso" \
     -appended_part_as_gpt \
     -iso_mbr_part_type a2a0d0ebe5b9334487c068b6b72699c7 \
     -c '/boot.catalog' \
@@ -80,16 +82,16 @@ xorriso -joliet on -as mkisofs \
     -boot-info-table \
     --grub2-boot-info \
     -eltorito-alt-boot \
-    -e '--interval:appended_partition_2_start_717863s_size_8496d:all::' \
+    -e '--interval:appended_partition_2_start_1039012s_size_10068d:all::' \
     -no-emul-boot \
-    -boot-load-size 8496 \
+    -boot-load-size 10068 \
     -isohybrid-gpt-basdat \
-    -V "Ubuntu 22.04.1 autoinstall" \
-    -o ubuntu-22.04.1-frankeninstaller.iso \
+    -V "Ubuntu $UBUNTU_VER autoinstall" \
+    -o ubuntu-$UBUNTU_VER-frankeninstaller.iso \
     server-iso-extracted/
 
 
 if [ "$#" -gt 0 ] && [ "$1" == 'startvm' ]; then
-  vboxmanage storageattach autoinstall-test --storagectl IDE --port 0 --device 0 --type dvddrive --medium ubuntu-22.04.1-frankeninstaller.iso; vboxmanage startvm autoinstall-test
+  vboxmanage storageattach autoinstall-test --storagectl IDE --port 0 --device 0 --type dvddrive --medium ubuntu-$UBUNTU_VER-frankeninstaller.iso; vboxmanage startvm autoinstall-test
 fi
 
