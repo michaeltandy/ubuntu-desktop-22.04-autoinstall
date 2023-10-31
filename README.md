@@ -24,6 +24,14 @@ I've experimented with two ways to customise the packages in the installation, w
 
 * On the other hand, in this `main` branch we modify two `squashfs` filesystems, installing the packages once upfront. This makes for a faster install, but you have to run parts of the build process as root.
 
+## Places to customise
+
+* `desktop-squashfs-modifications.sh` for most modifications to the installed Ubuntu image.
+* `user-data` for disk layout, disk encryption password, and miscellaneous commands run during install.
+* `make-autoinstall-image.sh` scripts the actual creation of the ISO, copying files into the ISO etc.
+* `attempt-wifi-connection.sh` for wifi during install (to allow the installation of updates)
+* `setup-secureboot-mok.sh` fiddles around with secure boot, setting up a machine owner key
+
 # Other useful info
 
 * [curtin yaml examples](https://github.com/canonical/curtin/blob/master/examples/apt-source.yaml)
